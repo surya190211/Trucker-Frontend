@@ -26,34 +26,42 @@ const SummaryCalculations = ({ entries }) => {
     }, [entries]);
 
     return (
-        <div className="bg-blue-50 p-4 rounded-md shadow-sm border border-blue-100">
-            <h3 className="text-lg font-bold mb-3 text-blue-900">Summary Dashboard</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                <div className="bg-white p-2 rounded shadow text-center">
-                    <p className="text-xs text-gray-500">Off Duty</p>
-                    <p className="font-bold">{summary.totals[1].toFixed(2)} hrs</p>
+        <div className="glass-panel p-6 rounded-2xl">
+            <h2 className="text-xl font-semibold text-slate-200 mb-6 flex items-center gap-2">
+                <svg className="w-5 h-5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                Summary Dashboard
+            </h2>
+
+            <div className="space-y-4">
+                <div className="flex justify-between items-center p-3 bg-slate-800/40 rounded-lg border border-slate-700/50">
+                    <span className="text-slate-400 text-sm">Off Duty</span>
+                    <span className="text-slate-200 font-bold font-mono">{summary.totals[1].toFixed(2)} <span className="text-xs font-sans text-slate-500">HRS</span></span>
                 </div>
-                <div className="bg-white p-2 rounded shadow text-center">
-                    <p className="text-xs text-gray-500">Sleeper Berth</p>
-                    <p className="font-bold">{summary.totals[2].toFixed(2)} hrs</p>
+                <div className="flex justify-between items-center p-3 bg-slate-800/40 rounded-lg border border-slate-700/50">
+                    <span className="text-slate-400 text-sm">Sleeper Berth</span>
+                    <span className="text-slate-200 font-bold font-mono">{summary.totals[2].toFixed(2)} <span className="text-xs font-sans text-slate-500">HRS</span></span>
                 </div>
-                <div className="bg-white p-2 rounded shadow text-center">
-                    <p className="text-xs text-gray-500">Driving</p>
-                    <p className="font-bold">{summary.totals[3].toFixed(2)} hrs</p>
+                <div className="flex justify-between items-center p-3 bg-cyan-900/20 rounded-lg border border-cyan-800/30">
+                    <span className="text-cyan-400 text-sm">Driving</span>
+                    <span className="text-cyan-300 font-bold font-mono">{summary.totals[3].toFixed(2)} <span className="text-xs font-sans text-cyan-600">HRS</span></span>
                 </div>
-                <div className="bg-white p-2 rounded shadow text-center">
-                    <p className="text-xs text-gray-500">On Duty (Not Driving)</p>
-                    <p className="font-bold">{summary.totals[4].toFixed(2)} hrs</p>
+                <div className="flex justify-between items-center p-3 bg-cyan-900/20 rounded-lg border border-cyan-800/30">
+                    <span className="text-cyan-400 text-sm">On Duty (Not Driving)</span>
+                    <span className="text-cyan-300 font-bold font-mono">{summary.totals[4].toFixed(2)} <span className="text-xs font-sans text-cyan-600">HRS</span></span>
                 </div>
             </div>
             
-            <div className="flex justify-between items-center bg-blue-600 text-white p-3 rounded">
-                <div>
-                    <span className="font-bold">Combined Active (Driving + On Duty): </span>
-                    <span className="text-xl ml-2">{summary.activeHours.toFixed(2)} hrs</span>
+            <div className="mt-8 p-5 bg-gradient-to-r from-slate-800 to-slate-800/50 rounded-xl border border-slate-700 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 blur-3xl rounded-full"></div>
+                <div className="relative z-10">
+                    <div className="text-slate-400 text-sm mb-1 uppercase tracking-wider">Combined Active</div>
+                    <div className="text-4xl font-bold text-white font-mono flex items-baseline gap-1">
+                        {summary.activeHours.toFixed(2)} <span className="text-lg font-sans text-slate-500">HRS</span>
+                    </div>
                 </div>
-                <div className={summary.totalHours === 24 ? "text-green-300" : "text-red-300"}>
-                    Total: {summary.totalHours.toFixed(2)} / 24.00 hrs
+                <div className={`mt-4 text-sm font-medium flex items-center justify-between ${summary.totalHours === 24 ? "text-emerald-400" : "text-rose-400"}`}>
+                    <span>Daily Total Validation</span>
+                    <span className="font-mono">{summary.totalHours.toFixed(2)} / 24.00</span>
                 </div>
             </div>
         </div>
