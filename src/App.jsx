@@ -1,94 +1,53 @@
-import React, { useState, useCallback } from 'react';
-import LogHeader from './components/LogHeader';
-import LogGrid from './components/LogGrid';
-import SummaryCalculations from './components/SummaryCalculations';
-import { createLog } from './services/api';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import Dashboard from './pages/Dashboard';
+import LogHistory from './pages/LogHistory';
+import Drivers from './pages/Drivers';
+import Trucks from './pages/Trucks';
+import Trips from './pages/Trips';
+import Reports from './pages/Reports';
+import Settings from './pages/Settings';
 
-const App = () => {
-    const [formData, setFormData] = useState({
-        date: '',
-        driver_name: '',
-        tractor_number: '',
-        trailer_number: '',
-        shipper_commodity: '',
-        total_miles_driven: 0,
-        signature: ''
-    });
-
-    const [entries, setEntries] = useState([]);
-    const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
-    const handleInputChange = useCallback((e) => {
-        setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
-    }, []);
-
-    const handleSubmit = async () => {
-        setIsSubmitting(true);
-        try {
-            const payload = {
-                ...formData,
-                entries: entries
-            };
-            await createLog(payload);
-            setStatusMessage({ type: 'success', text: 'Logbook saved successfully and securely to the backend!' });
-        } catch (error) {
-            const errorMsg = error.response?.data ? JSON.stringify(error.response.data) : 'Failed to save logbook. Check the console or backend connection.';
-            setStatusMessage({ type: 'error', text: errorMsg });
-        }
-        setIsSubmitting(false);
-    };
-
-    return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4 md:p-8">
-            <div className="max-w-6xl mx-auto space-y-8">
-                
-                {/* Header Section */}
-                <header className="flex flex-col md:flex-row justify-between items-start md:items-center glass-panel p-6 rounded-2xl">
-                    <div>
-                        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500 tracking-tight">
-                            Digital Driver Logbook
-                        </h1>
-                        <p className="text-slate-400 text-sm mt-1">FMCSA Hours of Service Compliant</p>
-                    </div>
-                    <div className="mt-4 md:mt-0 flex items-center gap-3">
-                        <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></div>
-                        <span className="text-sm font-medium text-slate-300">System Online</span>
-                    </div>
-                </header>
-                
-                {/* Main Content Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    <div className="lg:col-span-8 space-y-8">
-                        <LogHeader formData={formData} handleInputChange={handleInputChange} />
-                        <LogGrid entries={entries} setEntries={setEntries} />
-                    </div>
-                    <div className="lg:col-span-4 space-y-8">
-                        <SummaryCalculations entries={entries} />
-                        
-                        <div className="glass-panel p-6 rounded-2xl">
-                            <button 
-                                onClick={handleSubmit} 
-                                disabled={isSubmitting}
-                                className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold py-4 rounded-xl shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all active:scale-95 flex items-center justify-center gap-2">
-                                {isSubmitting ? 'Syncing...' : 'Submit Daily Log'}
-                                {!isSubmitting && (
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                                )}
-                            </button>
-
-                            {statusMessage.text && (
-                                <div className={`mt-4 p-4 rounded-xl text-sm ${statusMessage.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
-                                    {statusMessage.text}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+export default function App() {
+  return (
+    <Router>
+      <div className="min-h-screen bg-slate-900 text-slate-100 flex">
+        {/* Sidebar */}
+        <div className="w-64 bg-slate-900 p-8 flex flex-col gap-6 border-r border-white/10 shadow-2xl z-10 relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/5 to-transparent pointer-events-none"></div>
+          <h2 className="text-3xl font-black text-cyan-400 mb-8 tracking-tighter flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-600 shadow-lg shadow-cyan-500/20"></div>
+            TRUCK<span className="text-white">OS</span>
+          </h2>
+          
+          <div className="flex flex-col gap-2">
+              <Link to="/" className="px-4 py-3 hover:bg-white/5 rounded-xl transition-all font-medium flex items-center gap-3 text-slate-300 hover:text-white">Dashboard</Link>
+              <Link to="/logs" className="px-4 py-3 hover:bg-white/5 rounded-xl transition-all font-medium flex items-center gap-3 text-slate-300 hover:text-white">Log History</Link>
+              <Link to="/drivers" className="px-4 py-3 hover:bg-white/5 rounded-xl transition-all font-medium flex items-center gap-3 text-slate-300 hover:text-white">Drivers</Link>
+              <Link to="/trucks" className="px-4 py-3 hover:bg-white/5 rounded-xl transition-all font-medium flex items-center gap-3 text-slate-300 hover:text-white">Trucks</Link>
+              <Link to="/trips" className="px-4 py-3 hover:bg-white/5 rounded-xl transition-all font-medium flex items-center gap-3 text-slate-300 hover:text-white">Trips</Link>
+              <Link to="/reports" className="px-4 py-3 hover:bg-white/5 rounded-xl transition-all font-medium flex items-center gap-3 text-slate-300 hover:text-white">Reports</Link>
+          </div>
+          
+          <Link to="/settings" className="px-4 py-3 hover:bg-white/5 rounded-xl transition-all font-medium flex items-center gap-3 text-slate-400 hover:text-white mt-auto">System Settings</Link>
         </div>
-    );
-};
-
-export default App;
+        
+        {/* Main Content */}
+        <div className="flex-1 bg-[#0b1120] relative overflow-y-auto">
+          <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-cyan-900/20 to-transparent pointer-events-none"></div>
+          <div className="relative z-10 h-full p-8">
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/logs" element={<LogHistory />} />
+              <Route path="/drivers" element={<Drivers />} />
+              <Route path="/trucks" element={<Trucks />} />
+              <Route path="/trips" element={<Trips />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/settings" element={<Settings />} />
+            </Routes>
+          </div>
+        </div>
+      </div>
+    </Router>
+  );
+}
