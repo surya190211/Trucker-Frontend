@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/api/logs/';
+const API_URL = 'https://surya1902.pythonanywhere.com/api/logs/';
 
 export const createLog = async (logData) => {
     return await axios.post(API_URL, logData);
