@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 
 export default function Dashboard() {
     const [hosData, setHosData] = useState(null);
@@ -9,7 +9,7 @@ export default function Dashboard() {
     useEffect(() => {
         const fetchHOS = async () => {
             try {
-                const response = await axios.get('https://surya1902.pythonanywhere.com/api/hos/');
+                const response = await api.get('/hos/');
                 setHosData(response.data.data);
                 setLoading(false);
             } catch (err) {

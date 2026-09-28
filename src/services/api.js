@@ -1,11 +1,15 @@
 import axios from 'axios';
 
-const API_URL = 'https://surya1902.pythonanywhere.com/api/logs/';
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'https://surya1902.pythonanywhere.com/api';
 
-export const createLog = async (logData) => {
-    return await axios.post(API_URL, logData);
-};
+const api = axios.create({
+    baseURL: API_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
 
-export const getLogs = async () => {
-    return await axios.get(API_URL);
-};
+export const getDailyLogs = () => api.get('/logs/');
+export const createDailyLog = (logData) => api.post('/logs/', logData);
+
+export default api;
