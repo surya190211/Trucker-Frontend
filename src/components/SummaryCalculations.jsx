@@ -68,4 +68,4 @@ const SummaryCalculations = ({ entries }) => {
     );
 };
 
-export default SummaryCalculations;
+export default React.memo(SummaryCalculations);

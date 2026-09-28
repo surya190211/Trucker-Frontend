@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import LogHeader from './components/LogHeader';
 import LogGrid from './components/LogGrid';
 import SummaryCalculations from './components/SummaryCalculations';
@@ -19,9 +19,9 @@ const App = () => {
     const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleInputChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+    const handleInputChange = useCallback((e) => {
+        setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    }, []);
 
     const handleSubmit = async () => {
         setIsSubmitting(true);

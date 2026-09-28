@@ -90,4 +90,4 @@ const LogGrid = ({ entries, setEntries }) => {
     );
 };
 
-export default LogGrid;
+export default React.memo(LogGrid);

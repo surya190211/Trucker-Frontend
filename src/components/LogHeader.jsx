@@ -41,4 +41,4 @@ const LogHeader = ({ formData, handleInputChange }) => {
     );
 };
 
-export default LogHeader;
+export default React.memo(LogHeader);
