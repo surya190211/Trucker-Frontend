@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import api from '../services/api';
+import ELDGrid from '../components/ELDGrid';
 
 export default function Trips() {
     const [loading, setLoading] = useState(false);
@@ -63,28 +64,18 @@ export default function Trips() {
                             </div>
                             
                             <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5">
+                                
                                 <h3 className="text-xl font-bold mb-4 text-cyan-400">Generated ELD Schedule</h3>
                                 {result.days.map((day, i) => (
-                                    <div key={i} className="mb-6 last:mb-0">
-                                        <h4 className="text-lg font-bold mb-3 border-b border-white/10 pb-2">{day.date}</h4>
-                                        <div className="space-y-2">
-                                            {day.segments.map((seg, j) => (
-                                                <div key={j} className="flex justify-between items-center bg-slate-900/50 p-3 rounded-lg border border-white/5 text-sm">
-                                                    <div>
-                                                        <span className={`inline-block w-2 h-2 rounded-full mr-3 ${seg.status === 'DRIVING' ? 'bg-green-500' : 'bg-blue-500'}`}></span>
-                                                        <span className="font-bold w-32 inline-block">{seg.status}</span>
-                                                        <span className="text-gray-400">{seg.start.split('T')[1].substring(0, 5)} - {seg.end.split('T')[1].substring(0, 5)}</span>
-                                                    </div>
-                                                    <div className="text-right">
-                                                        <p className="font-medium text-white">{seg.location}</p>
-                                                        <p className="text-xs text-gray-500">{seg.reason} ({Math.round(seg.miles)} mi)</p>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
+                                    <div key={i} className="mb-8 last:mb-0">
+                                        <h4 className="text-lg font-bold mb-3 border-b border-white/10 pb-2 flex justify-between">
+                                            <span>{day.date}</span>
+                                            <span className="text-gray-500 text-sm">{day.segments.reduce((acc, s) => acc + (s.miles || 0), 0).toFixed(0)} Miles</span>
+                                        </h4>
+                                        <ELDGrid segments={day.segments} />
                                     </div>
                                 ))}
-                            </div>
+</div>
                         </div>
                     ) : (
                         <div className="flex items-center justify-center h-full bg-slate-800/20 rounded-2xl border border-dashed border-white/10 text-gray-500">
