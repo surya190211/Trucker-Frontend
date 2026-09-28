@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import api from '../services/api';
 import ELDGrid from '../components/ELDGrid';
+import TripMap from '../components/TripMap';
 
 export default function Trips() {
     const [loading, setLoading] = useState(false);
@@ -52,6 +53,10 @@ export default function Trips() {
                 <div className="lg:col-span-2">
                     {result ? (
                         <div className="space-y-6">
+                            <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 mb-6">
+                                <h3 className="text-xl font-bold text-cyan-400">Route Map</h3>
+                                <TripMap routeGeometry={result.route?.geometry} />
+                            </div>
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 <div className="p-4 bg-slate-800/50 rounded-xl border border-white/5">
                                     <p className="text-gray-500 text-xs font-bold uppercase">Distance</p>

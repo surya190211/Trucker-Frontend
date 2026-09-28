@@ -17,3 +17,12 @@
     @apply block text-sm font-medium text-slate-400 mb-1 tracking-wide uppercase text-xs;
   }
 }
+
+@media print {
+    body * { visibility: hidden; }
+    #eld-print-section, #eld-print-section * { visibility: visible; }
+    #eld-print-section { position: absolute; left: 0; top: 0; width: 100%; color: black; background: white; }
+    .bg-slate-900 { background: white !important; }
+    .text-white { color: black !important; }
+    .border-white\/5 { border-color: black !important; }
+}
