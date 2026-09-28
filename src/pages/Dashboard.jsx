@@ -9,7 +9,7 @@ export default function Dashboard() {
     useEffect(() => {
         const fetchHOS = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/hos/');
+                const response = await axios.get('https://surya1902.pythonanywhere.com/api/hos/');
                 setHosData(response.data.data);
                 setLoading(false);
             } catch (err) {
