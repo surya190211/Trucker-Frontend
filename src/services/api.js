@@ -13,3 +13,9 @@ export const getDailyLogs = () => api.get('/logs/');
 export const createDailyLog = (logData) => api.post('/logs/', logData);
 
 export default api;
+
+export const getDrivers = () => api.get('/drivers/');
+export const createDriver = (data) => api.post('/drivers/', data);
+
+export const getTrucks = () => api.get('/trucks/');
+export const createTruck = (data) => api.post('/trucks/', data);
