@@ -64,21 +64,37 @@ export default function Trips() {
                         <div className="space-y-12">
                             {/* 1. Trip Summary */}
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center">
+                                <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
                                     <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Total Distance</p>
                                     <p className="text-2xl font-black text-white">{Math.round(result.trip.distance_miles)} mi</p>
                                 </div>
-                                <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center">
-                                    <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Est. Travel</p>
-                                    <p className="text-2xl font-black text-white">{Math.round(result.trip.estimated_duration_hours)} hrs</p>
-                                </div>
-                                <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center">
-                                    <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Total Duty</p>
-                                    <p className="text-2xl font-black text-white">{(result.summary?.on_duty_hours ?? 0).toFixed(1)} hrs</p>
-                                </div>
-                                <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center">
+                                <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
                                     <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Total Days</p>
                                     <p className="text-2xl font-black text-white">{result.summary.days}</p>
+                                </div>
+                                <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
+                                    <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Total Driving</p>
+                                    <p className="text-2xl font-black text-cyan-400">{(result.summary.driving_hours).toFixed(1)}h</p>
+                                </div>
+                                <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
+                                    <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Total Duty</p>
+                                    <p className="text-2xl font-black text-amber-400">{(result.summary.on_duty_hours).toFixed(1)}h</p>
+                                </div>
+                                <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
+                                    <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Sleeper Berth</p>
+                                    <p className="text-2xl font-black text-purple-400">{(result.summary.sleeper_hours).toFixed(1)}h</p>
+                                </div>
+                                <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
+                                    <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Cycle Remaining</p>
+                                    <p className="text-2xl font-black text-green-400">{(result.summary.cycle_hours_remaining).toFixed(1)}h</p>
+                                </div>
+                                <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
+                                    <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Fuel Stops</p>
+                                    <p className="text-2xl font-black text-white">{result.summary.fuel_stops}</p>
+                                </div>
+                                <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
+                                    <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Rest Stops</p>
+                                    <p className="text-2xl font-black text-white">{result.summary.rest_stops}</p>
                                 </div>
                             </div>
 

@@ -14,13 +14,14 @@ export default function StopsList({ stops }) {
                         <div className="flex justify-between items-start">
                             <div>
                                 <h4 className="text-white font-bold tracking-wide">{stop.type}</h4>
-                                <p className="text-gray-400 text-sm mt-1">{stop.location || `Mile ${Math.round(stop.mileage || 0)}`}</p>
+                                <p className="text-gray-400 text-sm mt-1">{stop.location || `Mile ${Math.round(stop.miles || 0)}`}</p>
                             </div>
                             <div className="text-right">
                                 <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Time</span>
                                 <span className="text-white text-sm">
                                     {new Date(stop.start).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} – {new Date(stop.end).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                                 </span>
+                                <span className="text-xs text-cyan-400 font-bold block mt-1">{stop.duration_hours ? stop.duration_hours + " hrs" : ""}</span>
                             </div>
                         </div>
                     </div>
