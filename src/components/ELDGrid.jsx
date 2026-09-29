@@ -40,19 +40,19 @@ export default function ELDGrid({ segments }) {
     });
 
     return (
-        <div className="w-full mt-6 bg-slate-100 p-4 rounded text-black font-mono">
+        <div className="w-full bg-slate-100 print:bg-white p-4 rounded-xl text-black font-mono border border-black/20">
             <div className="flex border border-black h-48 relative">
                 {/* Labels */}
-                <div className="w-24 border-r border-black flex flex-col">
+                <div className="w-32 border-r border-black flex flex-col">
                     {STATUS_ROWS.map((label, i) => (
-                        <div key={i} className="flex-1 flex items-center justify-start text-xs pl-1 font-bold border-b border-black last:border-0 leading-tight">
+                        <div key={i} className="flex-1 flex items-center justify-start text-[10px] sm:text-xs pl-2 font-bold border-b border-black last:border-0 leading-tight">
                             {label}
                         </div>
                     ))}
                 </div>
                 
                 {/* Grid Area */}
-                <div className="flex-1 relative">
+                <div className="flex-1 relative mt-1">
                     {/* Hour Vertical Lines */}
                     {[...Array(24)].map((_, i) => (
                         <div key={i} className={`absolute top-0 bottom-0 border-l ${i % 12 === 0 ? 'border-black' : 'border-gray-300'} z-0`} style={{left: `${(i/24)*100}%`}}></div>
@@ -74,25 +74,12 @@ export default function ELDGrid({ segments }) {
                     </svg>
                     
                     {/* Hour Labels */}
-                    <div className="absolute -top-5 left-0 right-0 flex justify-between text-[10px] font-bold">
+                    <div className="absolute -top-5 left-0 right-0 flex justify-between text-[10px] font-bold px-1">
                         <span>M</span>
                         <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span>
                         <span>N</span>
                         <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span>
                     </div>
-                </div>
-            </div>
-            
-            <div className="mt-4 border-t border-black pt-2">
-                <h4 className="font-bold mb-2 uppercase text-xs tracking-wider">Log Remarks</h4>
-                <div className="text-xs space-y-1">
-                    {segments.filter(s => s.reason !== 'Padding' && s.reason !== 'Off Duty' || (s.reason==='Off Duty' && s.duration > 8)).map((seg, i) => (
-                        <div key={i} className="grid grid-cols-12 gap-2">
-                            <div className="col-span-2">{seg.start.split('T')[1].substring(0, 5)} - {seg.end.split('T')[1].substring(0, 5)}</div>
-                            <div className="col-span-3">{seg.location}</div>
-                            <div className="col-span-7">{seg.reason} {seg.miles > 0 ? `(${Math.round(seg.miles)} mi)` : ''}</div>
-                        </div>
-                    ))}
                 </div>
             </div>
         </div>

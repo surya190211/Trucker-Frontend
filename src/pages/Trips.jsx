@@ -1,22 +1,26 @@
 import React, { useState } from 'react';
-import api from '../services/api';
-import ELDGrid from '../components/ELDGrid';
+import { planTrip } from '../services/api';
 import TripMap from '../components/TripMap';
+import StopsList from '../components/StopsList';
+import DailyELDSheet from '../components/DailyELDSheet';
 
 export default function Trips() {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({ current_location: '', pickup_location: '', dropoff_location: '', current_cycle_hours: 0 });
     const [result, setResult] = useState(null);
+    const [error, setError] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+        setError('');
         try {
-            const res = await api.post('/trips/plan/', formData);
+            const res = await planTrip(formData);
             setResult(res.data);
             setLoading(false);
         } catch (err) {
             console.error(err);
+            setError('Unable to calculate this route. Please check the location names and try again.');
             setLoading(false);
         }
     };
@@ -26,8 +30,13 @@ export default function Trips() {
             <h1 className="text-4xl font-black mb-8 tracking-tight text-white/90">Trip Planner</h1>
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-1 p-6 bg-slate-800/50 rounded-2xl border border-white/5 backdrop-blur-md">
+                <div className="lg:col-span-1 p-6 bg-slate-800/50 rounded-2xl border border-white/5 backdrop-blur-md self-start sticky top-8">
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                        {error && (
+                            <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-xl text-sm font-semibold">
+                                {error}
+                            </div>
+                        )}
                         <div>
                             <label className="text-gray-400 text-sm font-bold uppercase tracking-wider mb-2 block">Current Location</label>
                             <input required className="w-full bg-slate-900/50 border border-white/5 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500" onChange={e => setFormData({...formData, current_location: e.target.value})} />
@@ -52,39 +61,56 @@ export default function Trips() {
                 
                 <div className="lg:col-span-2">
                     {result ? (
-                        <div className="space-y-6">
-                            <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 mb-6">
-                                <h3 className="text-xl font-bold text-cyan-400">Route Map</h3>
-                                <TripMap routeGeometry={result.route?.geometry} />
-                            </div>
+                        <div className="space-y-12">
+                            {/* 1. Trip Summary */}
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <div className="p-4 bg-slate-800/50 rounded-xl border border-white/5">
-                                    <p className="text-gray-500 text-xs font-bold uppercase">Distance</p>
-                                    <p className="text-xl font-bold text-white">{Math.round(result.trip.distance_miles)} mi</p>
+                                <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center">
+                                    <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Total Distance</p>
+                                    <p className="text-2xl font-black text-white">{Math.round(result.trip.distance_miles)} mi</p>
                                 </div>
-                                <div className="p-4 bg-slate-800/50 rounded-xl border border-white/5">
-                                    <p className="text-gray-500 text-xs font-bold uppercase">Est. Travel</p>
-                                    <p className="text-xl font-bold text-white">{Math.round(result.trip.estimated_duration_hours)} hrs</p>
+                                <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center">
+                                    <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Est. Travel</p>
+                                    <p className="text-2xl font-black text-white">{Math.round(result.trip.estimated_duration_hours)} hrs</p>
+                                </div>
+                                <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center">
+                                    <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Total Duty</p>
+                                    <p className="text-2xl font-black text-white">{result.summary.on_duty_hours.toFixed(1)} hrs</p>
+                                </div>
+                                <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center">
+                                    <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Total Days</p>
+                                    <p className="text-2xl font-black text-white">{result.summary.days}</p>
+                                </div>
+                            </div>
+
+                            {/* 2. Map */}
+                            <div className="bg-slate-800/50 rounded-2xl border border-white/5 overflow-hidden">
+                                <div className="p-4 border-b border-white/5 bg-slate-900/30">
+                                    <h3 className="text-xl font-bold tracking-tight text-cyan-400">Route Map</h3>
+                                </div>
+                                <TripMap routeGeometry={result.route?.geometry} waypoints={result.route?.waypoints} />
+                            </div>
+                            
+                            {/* 3. Planned Stops */}
+                            <div className="bg-slate-800/50 rounded-2xl border border-white/5 overflow-hidden">
+                                <div className="p-4 border-b border-white/5 bg-slate-900/30">
+                                    <h3 className="text-xl font-bold tracking-tight text-cyan-400">Planned Stops</h3>
+                                </div>
+                                <div className="p-6">
+                                    <StopsList stops={result.stops} />
                                 </div>
                             </div>
                             
-                            <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5">
-                                
-                                <h3 className="text-xl font-bold mb-4 text-cyan-400">Generated ELD Schedule</h3>
+                            {/* 4. Daily ELD Logs */}
+                            <div>
+                                <h3 className="text-2xl font-black mb-6 tracking-tight text-white/90">Daily ELD Logs</h3>
                                 {result.days.map((day, i) => (
-                                    <div key={i} className="mb-8 last:mb-0">
-                                        <h4 className="text-lg font-bold mb-3 border-b border-white/10 pb-2 flex justify-between">
-                                            <span>{day.date}</span>
-                                            <span className="text-gray-500 text-sm">{day.segments.reduce((acc, s) => acc + (s.miles || 0), 0).toFixed(0)} Miles</span>
-                                        </h4>
-                                        <ELDGrid segments={day.segments} />
-                                    </div>
+                                    <DailyELDSheet key={day.date || i} day={day} metadata={{driver: 'Driver Name'}} />
                                 ))}
-</div>
+                            </div>
                         </div>
                     ) : (
-                        <div className="flex items-center justify-center h-full bg-slate-800/20 rounded-2xl border border-dashed border-white/10 text-gray-500">
-                            Enter trip details to generate HOS schedule.
+                        <div className="flex items-center justify-center h-[600px] bg-slate-800/20 rounded-2xl border border-dashed border-white/10 text-gray-500 font-medium text-lg">
+                            Enter trip details to generate a comprehensive HOS plan.
                         </div>
                     )}
                 </div>

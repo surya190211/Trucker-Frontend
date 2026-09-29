@@ -19,3 +19,7 @@ export const createDriver = (data) => api.post('/drivers/', data);
 
 export const getTrucks = () => api.get('/trucks/');
 export const createTruck = (data) => api.post('/trucks/', data);
+
+export const planTrip = (data) => api.post('/trips/plan/', data);
+export const getHOS = () => api.get('/hos/');
+

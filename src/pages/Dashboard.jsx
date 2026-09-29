@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import api from '../services/api';
+import { getHOS } from '../services/api';
 
 export default function Dashboard() {
     const [hosData, setHosData] = useState(null);
+    const [hasData, setHasData] = useState(true);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchHOS = async () => {
             try {
-                const response = await api.get('/hos/');
-                setHosData(response.data.data);
+                const response = await getHOS();
+                if (response.data.has_data === false) {
+                    setHasData(false);
+                } else {
+                    setHosData(response.data.data);
+                }
                 setLoading(false);
             } catch (err) {
                 console.error(err);
@@ -33,7 +38,17 @@ export default function Dashboard() {
         </div>
     );
     
-    if (!hosData) return <div className="p-8 text-white font-medium">No logs available to calculate HOS. Go to Logbook to create an entry.</div>;
+    if (!hasData || !hosData) return (
+        <div className="p-8 w-full h-full flex flex-col items-center justify-center">
+            <div className="p-10 bg-slate-800/30 rounded-2xl border border-dashed border-white/10 text-center max-w-lg">
+                <h2 className="text-2xl font-bold text-white mb-3">No saved driver logs yet.</h2>
+                <p className="text-gray-400 mb-6">Your dashboard is empty because there are no logs in the database.</p>
+                <a href="/trips" className="bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-cyan-500/20 inline-block">
+                    Use Trip Planner to generate a new trip
+                </a>
+            </div>
+        </div>
+    );
 
     return (
         <div className="p-8 w-full h-full text-white">
@@ -61,7 +76,7 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            {hosData.violations.length > 0 && (
+            {hosData.violations && hosData.violations.length > 0 && (
                 <div className="p-6 bg-red-900/30 rounded-2xl border border-red-500/20 mb-8 backdrop-blur-md">
                     <h2 className="text-red-400 font-bold mb-3 uppercase tracking-widest text-sm">Active Violations</h2>
                     <ul className="list-disc pl-5 text-red-200 font-medium">
