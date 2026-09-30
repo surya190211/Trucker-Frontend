@@ -20,7 +20,7 @@ export default function Trips() {
             setLoading(false);
         } catch (err) {
             console.error(err);
-            setError('Unable to calculate this route. Please check the location names and try again.');
+            setError(err.response?.data?.error || 'Unable to calculate this route. Please check the location names and try again.');
             setLoading(false);
         }
     };
@@ -66,35 +66,35 @@ export default function Trips() {
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
                                     <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Total Distance</p>
-                                    <p className="text-2xl font-black text-white">{Math.round(result.trip.distance_miles)} mi</p>
+                                    <p className="text-2xl font-black text-white">{Math.round(result.trip?.distance_miles ?? 0)} mi</p>
                                 </div>
                                 <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
                                     <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Total Days</p>
-                                    <p className="text-2xl font-black text-white">{result.summary.days}</p>
+                                    <p className="text-2xl font-black text-white">{result.summary?.days ?? 0}</p>
                                 </div>
                                 <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
                                     <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Total Driving</p>
-                                    <p className="text-2xl font-black text-cyan-400">{(result.summary.driving_hours).toFixed(1)}h</p>
+                                    <p className="text-2xl font-black text-cyan-400">{(result.summary?.driving_hours ?? 0).toFixed(1)}h</p>
                                 </div>
                                 <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
                                     <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Total Duty</p>
-                                    <p className="text-2xl font-black text-amber-400">{(result.summary.on_duty_hours).toFixed(1)}h</p>
+                                    <p className="text-2xl font-black text-amber-400">{(result.summary?.on_duty_hours ?? 0).toFixed(1)}h</p>
                                 </div>
                                 <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
                                     <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Sleeper Berth</p>
-                                    <p className="text-2xl font-black text-purple-400">{(result.summary.sleeper_hours).toFixed(1)}h</p>
+                                    <p className="text-2xl font-black text-purple-400">{(result.summary?.sleeper_hours ?? 0).toFixed(1)}h</p>
                                 </div>
                                 <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
                                     <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Cycle Remaining</p>
-                                    <p className="text-2xl font-black text-green-400">{(result.summary.cycle_hours_remaining).toFixed(1)}h</p>
+                                    <p className="text-2xl font-black text-green-400">{(result.summary?.cycle_hours_remaining ?? 0).toFixed(1)}h</p>
                                 </div>
                                 <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
                                     <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Fuel Stops</p>
-                                    <p className="text-2xl font-black text-white">{result.summary.fuel_stops}</p>
+                                    <p className="text-2xl font-black text-white">{result.summary?.fuel_stops ?? 0}</p>
                                 </div>
                                 <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
                                     <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Rest Stops</p>
-                                    <p className="text-2xl font-black text-white">{result.summary.rest_stops}</p>
+                                    <p className="text-2xl font-black text-white">{result.summary?.rest_stops ?? 0}</p>
                                 </div>
                             </div>
 
