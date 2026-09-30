@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getHOS } from '../services/api';
 
 export default function Dashboard() {
@@ -43,9 +44,9 @@ export default function Dashboard() {
             <div className="p-10 bg-slate-800/30 rounded-2xl border border-dashed border-white/10 text-center max-w-lg">
                 <h2 className="text-2xl font-bold text-white mb-3">No saved driver logs yet.</h2>
                 <p className="text-gray-400 mb-6">Your dashboard is empty because there are no logs in the database.</p>
-                <a href="/trips" className="bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-cyan-500/20 inline-block">
+                <Link to="/trips" className="bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-cyan-500/20 inline-block">
                     Use Trip Planner to generate a new trip
-                </a>
+                </Link>
             </div>
         </div>
     );
