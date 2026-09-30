@@ -44,7 +44,7 @@ export default function TripMap({ routeGeometry, waypoints }) {
         <div className="h-96 w-full relative z-0">
             <MapContainer center={positions[0]} zoom={5} style={{ height: '100%', width: '100%' }}>
                 <TileLayer
-                    url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 />
                 <Polyline positions={positions} color="#06b6d4" weight={4} opacity={0.8} />
