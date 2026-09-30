@@ -2,6 +2,18 @@ import React from 'react';
 import ELDGrid from './ELDGrid';
 
 export default function DailyELDSheet({ day, metadata }) {
+    // Compute totals directly from segments to ensure accuracy
+    const calcTotal = (status) => {
+        return day.segments
+            .filter(s => s.status === status)
+            .reduce((sum, s) => sum + (s.duration || 0), 0);
+    };
+
+    const offDuty = calcTotal('OFF DUTY');
+    const sleeper = calcTotal('SLEEPER BERTH');
+    const driving = calcTotal('DRIVING');
+    const onDuty = calcTotal('ON DUTY');
+
     return (
         <div className="mb-12 bg-slate-800/30 rounded-2xl border border-white/10 p-6 md:p-8 print:bg-white print:text-black print:border-none print:p-0 print-page-break">
             {/* Header */}
@@ -42,19 +54,19 @@ export default function DailyELDSheet({ day, metadata }) {
                     <div className="bg-slate-900/50 rounded-xl border border-white/5 p-4 grid grid-cols-2 gap-4 print:bg-gray-100 print:border-black/20 text-sm">
                         <div className="flex justify-between">
                             <span className="text-gray-400 print:text-gray-600">Off Duty:</span>
-                            <span className="text-white print:text-black font-bold">{day.totals?.off_duty?.toFixed(2) || '0.00'}</span>
+                            <span className="text-white print:text-black font-bold">{offDuty.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="text-gray-400 print:text-gray-600">Sleeper:</span>
-                            <span className="text-white print:text-black font-bold">{day.totals?.sleeper?.toFixed(2) || '0.00'}</span>
+                            <span className="text-white print:text-black font-bold">{sleeper.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="text-gray-400 print:text-gray-600">Driving:</span>
-                            <span className="text-white print:text-black font-bold">{day.totals?.driving?.toFixed(2) || '0.00'}</span>
+                            <span className="text-white print:text-black font-bold">{driving.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="text-gray-400 print:text-gray-600">On Duty:</span>
-                            <span className="text-white print:text-black font-bold">{day.totals?.on_duty?.toFixed(2) || '0.00'}</span>
+                            <span className="text-white print:text-black font-bold">{onDuty.toFixed(2)}</span>
                         </div>
                     </div>
                 </div>

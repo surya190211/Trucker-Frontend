@@ -34,11 +34,11 @@ export default function TripMap({ routeGeometry, waypoints }) {
         }
     }, [routeGeometry]);
 
-    if (!routeGeometry || !waypoints || positions.length === 0) return null;
+    if (!routeGeometry || positions.length === 0) return null;
     
-    const curr = waypoints.current ? [waypoints.current[1], waypoints.current[0]] : null;
-    const pck = waypoints.pickup ? [waypoints.pickup[1], waypoints.pickup[0]] : null;
-    const drp = waypoints.dropoff ? [waypoints.dropoff[1], waypoints.dropoff[0]] : null;
+    const curr = waypoints && waypoints.current ? [waypoints.current[1], waypoints.current[0]] : null;
+    const pck = waypoints && waypoints.pickup ? [waypoints.pickup[1], waypoints.pickup[0]] : null;
+    const drp = waypoints && waypoints.dropoff ? [waypoints.dropoff[1], waypoints.dropoff[0]] : null;
     
     return (
         <div className="h-96 w-full relative z-0">

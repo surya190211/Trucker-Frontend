@@ -10,6 +10,64 @@ export default function Trips() {
     const [result, setResult] = useState(null);
     const [error, setError] = useState('');
 
+    
+    const calculateDerivedData = (resData) => {
+        if (!resData || !resData.days) return { stops: resData?.stops || [] };
+        
+        let derivedStops = [];
+        let onDuty = 0;
+        let sleeper = 0;
+        let fuel = 0;
+        let rest = 0;
+        let cycleUsed = parseFloat(formData.current_cycle_hours) || 0;
+        
+        resData.days.forEach(day => {
+            if (day.segments) {
+                day.segments.forEach(seg => {
+                    // Calculate totals
+                    if (seg.status === 'ON DUTY' || seg.status === 'DRIVING') {
+                        onDuty += (seg.duration || 0);
+                        cycleUsed += (seg.duration || 0);
+                    }
+                    if (seg.status === 'SLEEPER BERTH') {
+                        sleeper += (seg.duration || 0);
+                    }
+                    if (seg.reason === '34-Hour Restart' || (seg.reason === '10-Hour Rest' && seg.duration >= 10)) {
+                        cycleUsed = 0;
+                    }
+                    if (seg.reason === 'Fuel Stop') fuel++;
+                    if (seg.reason === '10-Hour Rest' || seg.reason === '34-Hour Restart') rest++;
+                    
+                    // Extract Stops if not padded
+                    if (seg.status === 'ON DUTY' || seg.status === 'SLEEPER BERTH' || (seg.status === 'OFF DUTY' && seg.reason !== 'Off Duty' && seg.reason !== 'Padding')) {
+                        let type = 'STOP';
+                        if (seg.reason === 'Fuel Stop') type = 'FUEL';
+                        else if (seg.reason === 'Pickup') type = 'PICKUP';
+                        else if (seg.reason === 'Dropoff') type = 'DROPOFF';
+                        else if (seg.reason === '10-Hour Rest') type = 'REST';
+                        else if (seg.reason === '34-Hour Restart') type = 'RESTART';
+                        else if (seg.reason === '30-Minute Break') type = 'BREAK';
+                        
+                        derivedStops.push({
+                            type: type,
+                            location: seg.location,
+                            start: seg.start,
+                            end: seg.end,
+                            reason: seg.reason,
+                            miles: seg.miles || 0,
+                            duration_hours: seg.duration || 0
+                        });
+                    }
+                });
+            }
+        });
+        
+        return {
+            stops: resData.stops && resData.stops.length > 0 ? resData.stops : derivedStops,
+            onDuty, sleeper, fuel, rest, cycleRemaining: Math.max(0, 70 - cycleUsed)
+        };
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -60,41 +118,44 @@ export default function Trips() {
                 </div>
                 
                 <div className="lg:col-span-2">
-                    {result ? (
+                    {result ? (() => {
+                        const derived = calculateDerivedData(result);
+                        return (
+
                         <div className="space-y-12">
                             {/* 1. Trip Summary */}
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
                                     <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Total Distance</p>
-                                    <p className="text-2xl font-black text-white">{Math.round(result.trip?.distance_miles ?? 0)} mi</p>
+                                    <p className="text-2xl font-black text-white">{result.trip?.distance_miles !== undefined ? Math.round(result.trip.distance_miles) : 'N/A'} mi</p>
                                 </div>
                                 <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
                                     <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Total Days</p>
-                                    <p className="text-2xl font-black text-white">{result.summary?.days ?? 0}</p>
+                                    <p className="text-2xl font-black text-white">{result.days ? result.days.length : 'N/A'}</p>
                                 </div>
                                 <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
                                     <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Total Driving</p>
-                                    <p className="text-2xl font-black text-cyan-400">{(result.summary?.driving_hours ?? 0).toFixed(1)}h</p>
+                                    <p className="text-2xl font-black text-cyan-400">{result.summary?.driving_hours !== undefined ? result.summary.driving_hours.toFixed(1) : 'N/A'}h</p>
                                 </div>
                                 <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
                                     <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Total Duty</p>
-                                    <p className="text-2xl font-black text-amber-400">{(result.summary?.on_duty_hours ?? 0).toFixed(1)}h</p>
+                                    <p className="text-2xl font-black text-amber-400">{(result.summary?.on_duty_hours ?? derived.onDuty).toFixed(1)}h</p>
                                 </div>
                                 <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
                                     <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Sleeper Berth</p>
-                                    <p className="text-2xl font-black text-purple-400">{(result.summary?.sleeper_hours ?? 0).toFixed(1)}h</p>
+                                    <p className="text-2xl font-black text-purple-400">{(result.summary?.sleeper_hours ?? derived.sleeper).toFixed(1)}h</p>
                                 </div>
                                 <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
                                     <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Cycle Remaining</p>
-                                    <p className="text-2xl font-black text-green-400">{(result.summary?.cycle_hours_remaining ?? 0).toFixed(1)}h</p>
+                                    <p className="text-2xl font-black text-green-400">{(result.summary?.cycle_hours_remaining ?? derived.cycleRemaining).toFixed(1)}h</p>
                                 </div>
                                 <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
                                     <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Fuel Stops</p>
-                                    <p className="text-2xl font-black text-white">{result.summary?.fuel_stops ?? 0}</p>
+                                    <p className="text-2xl font-black text-white">{result.summary?.fuel_stops ?? derived.fuel}</p>
                                 </div>
                                 <div className="p-6 bg-slate-800/50 rounded-2xl border border-white/5 text-center hover:bg-slate-800/70 transition-colors">
                                     <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Rest Stops</p>
-                                    <p className="text-2xl font-black text-white">{result.summary?.rest_stops ?? 0}</p>
+                                    <p className="text-2xl font-black text-white">{result.summary?.rest_stops ?? derived.rest}</p>
                                 </div>
                             </div>
 
@@ -112,7 +173,7 @@ export default function Trips() {
                                     <h3 className="text-xl font-bold tracking-tight text-cyan-400">Planned Stops</h3>
                                 </div>
                                 <div className="p-6">
-                                    <StopsList stops={result.stops} />
+                                    <StopsList stops={derived.stops} />
                                 </div>
                             </div>
                             
@@ -124,7 +185,8 @@ export default function Trips() {
                                 ))}
                             </div>
                         </div>
-                    ) : (
+                        );
+                    })() : (
                         <div className="flex items-center justify-center h-[600px] bg-slate-800/20 rounded-2xl border border-dashed border-white/10 text-gray-500 font-medium text-lg">
                             Enter trip details to generate a comprehensive HOS plan.
                         </div>
